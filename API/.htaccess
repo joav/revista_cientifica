@@ -1,0 +1,12 @@
+RewriteEngine on
+
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Credentials true
+RewriteBase /revista_cientifica/API/
+
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+
+RewriteRule ^create/usuario/([A-z0-9]+)/([\s\S]+)/([\s\S]+)/([\s\S]+)/([\s\S]+)/([0-9]+)/([0-9]+)$ connections.php?action=create&type=usuario&al=$1&email=$2&pass=$3&nom=$4&ap=$5&gen=$6&tipo=$7 [L]
+
+RewriteRule ^get/usuario/([A-z0-9]+)$ connections.php?action=get&type=usuario&req=$1 [L]
