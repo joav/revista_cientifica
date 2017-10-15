@@ -1,0 +1,39 @@
+/*Inserción minima con los datos obligatorios*/
+{
+	"users":[//Separar los usuarios por ,
+		{
+			"email":"aaa@aaa.com",//Correo electrónico
+			"pass":"",//Contraseña de usuario, si se envía vacio el sistema genera un password aleatorio
+			"nom":"Usuario",//Nombre del usuario
+			"ap":"Prueba",//Apellido del usuario
+			"tipo":0//Tipo de usuario 0->editor 1->revisor 2->autor
+		},
+		{
+			"email":"aaa@aaa.com",
+			"pass":"",
+			"nom":"Usuario",
+			"ap":"Prueba",
+			"tipo":0
+		}
+	]
+}
+/*Inserción completa*/
+{
+	"users":[//Separar los usuarios por ,
+		{
+			"al":"",//Alias del usuario
+			"email":"aaa@aaa.com",//Correo electrónico
+			"pass":"",//Contraseña de usuario, si se envía vacio el sistema genera un password aleatorio
+			"tel":"",//Teléfono del usuario
+			"nom":"Usuario",//Nombre del usuario
+			"ap":"Prueba",//Apellido del usuario
+			"gen":0,//Genero del usuario 0->hombre 1->mujer
+			"pais":"",
+			"bio":"",//Biografía
+			"lang":"",//Idioma o idiomas separados por ,
+			"inst":"",//Instituto del usuario
+			"int":"",//Intereses solo es necesario si se va insertar un revisor
+			"tipo":0//Tipo de usuario 0->editor 1->revisor 2->autor
+		}
+	]
+}
