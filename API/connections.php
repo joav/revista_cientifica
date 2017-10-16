@@ -40,6 +40,7 @@ try {
 					$users=$input->users;
 					$query="INSERT INTO usuario VALUES(null,?,?,MD5(?),?,?,?,?,?,?,?,?,?,?)";
 					$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
+					$db->exec("set names utf8");
 					$st=$db->prepare($query);
 					for ($i=0; $i < count($users); $i++) { 
 						$user=$users[$i];
@@ -117,7 +118,7 @@ try {
 						$count="(SELECT COUNT(*) FROM usuario WHERE ?  $usert)";
 					}else{
 						$query="SELECT $fields FROM usuario WHERE id_us IN ($req) AND ? $usert $c";
-						$query="(SELECT COUNT(*) FROM usuario WHERE id_us IN ($req) AND ? $usert)";
+						$count="(SELECT COUNT(*) FROM usuario WHERE id_us IN ($req) AND ? $usert)";
 						$req=[1,1];
 					}
 					$query=str_replace(" FROM", ", $count as total FROM", $query);
@@ -162,6 +163,7 @@ try {
 					break;
 				case 'update':
 					$input=json_decode(file_get_contents('php://input'));
+					$db->exec("set names utf8");
 					$id=$input->id;
 					unset($input->id);
 					$cols=[];
