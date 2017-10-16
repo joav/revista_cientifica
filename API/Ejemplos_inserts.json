@@ -37,3 +37,19 @@
 		}
 	]
 }
+/*Editar usuario*/
+{
+	"id":0,
+	"email":"",
+	"pass":"",//Contraseña de usuario, si se envía vacio el sistema genera un password aleatorio
+	"tel":"",//Teléfono del usuario
+	"nom":"Usuario",//Nombre del usuario
+	"ap":"Prueba",//Apellido del usuario
+	"gen":0,//Genero del usuario 0->hombre 1->mujer
+	"pais":"",
+	"bio":"",//Biografía
+	"lang":"",//Idioma o idiomas separados por ,
+	"inst":"",//Instituto del usuario
+	"int":"",//Intereses solo es necesario si se va insertar un revisor
+	"tipo":0//Tipo de usuario 0->editor 1->revisor 2->autor
+}

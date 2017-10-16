@@ -159,13 +159,44 @@ try {
 					else{
 						$resp->message='La cantidad de campos debe ser igual a la cantidad de valores a buscar.';
 					}
-					break; 
+					break;
+				case 'update':
+					$input=json_decode(file_get_contents('php://input'));
+					$id=$input->id;
+					unset($input->id);
+					$cols=[];
+					$vals=[];
+					foreach ($input as $key => $value) {
+						$cols[]=$key;
+						$vals[]=$value;
+					}
+					$vals[]=$id;
+					$cols=implode("_us=?, ", $cols);
+					$query="UPDATE usuario SET $cols WHERE id_us=?";
+					$st=$db->prepare($query);
+					if($st->execute($vals)){
+						$resp->message=true;
+						$resp->id[]=$id;
+					}else{
+						$resp->message='Fallo la edición del usuario '.$id;
+					}
+					break;
 				default:
 					# code...
 					break;
 			}
 			break;
-		
+		case 'articulo':
+			switch ($action) {
+				case 'create':
+
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+			break;
 		default:
 			# code...
 			break;
