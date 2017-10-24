@@ -37,66 +37,70 @@ try {
 			switch ($action) {
 				case 'create':
 					$input=json_decode(file_get_contents('php://input'));
-					$users=$input->users;
-					$query="INSERT INTO usuario VALUES(null,?,?,MD5(?),?,?,?,?,?,?,?,?,?,?)";
-					$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
-					$db->exec("set names utf8");
-					$st=$db->prepare($query);
-					for ($i=0; $i < count($users); $i++) { 
-						$user=$users[$i];
-						$values=[];
-						$complete=true;
-						$values[]=isset($user->al)?$user->al:'';
-						if(!isset($user->email)){
-							$resp->message.="La variable email es obligatoria.\n";
-							$complete=false;
-						}else{
-							$values[]=$user->email;
-						}
-						if($user->pass==''){
-							$values[]=randomPassword();
-						}else{
-							if(!isset($user->pass)){
-								$resp->message.="La variable pass es obligatoria si no desea generar un password aleatorio.\n";
+					if(isset($input->users)){
+						$users=$input->users;
+						$query="INSERT INTO usuario VALUES(null,?,?,MD5(?),?,?,?,?,?,?,?,?,?,?)";
+						$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
+						$db->exec("set names utf8");
+						$st=$db->prepare($query);
+						for ($i=0; $i < count($users); $i++) { 
+							$user=$users[$i];
+							$values=[];
+							$complete=true;
+							$values[]=isset($user->al)?$user->al:'';
+							if(!isset($user->email)){
+								$resp->message.="La variable email es obligatoria.\n";
 								$complete=false;
 							}else{
-								$values[]=$user->pass;
+								$values[]=$user->email;
+							}
+							if($user->pass==''){
+								$values[]=randomPassword();
+							}else{
+								if(!isset($user->pass)){
+									$resp->message.="La variable pass es obligatoria si no desea generar un password aleatorio.\n";
+									$complete=false;
+								}else{
+									$values[]=$user->pass;
+								}
+							}
+							$values[]=isset($user->tel)?$user->tel:'';
+							if(!isset($user->nom)){
+								$resp->message.="La variable nom es obligatoria.\n";
+								$complete=false;
+							}else{
+								$values[]=$user->nom;
+							}
+							if(!isset($user->ap)){
+								$resp->message.="La variable ap es obligatoria.\n";
+								$complete=false;
+							}else{
+								$values[]=$user->ap;
+							}
+							$values[]=isset($user->gen)?$user->gen:'';
+							$values[]=isset($user->pais)?$user->pais:'';
+							$values[]=isset($user->bio)?$user->bio:'';
+							$values[]=isset($user->lang)?$user->lang:'';
+							$values[]=isset($user->inst)?$user->inst:'';
+							$values[]=isset($user->int)?$user->int:'';
+							if(!isset($user->tipo)){
+								$resp->message.="La variable tipo es obligatoria.\n";
+								$complete=false;
+							}else{
+								$values[]=$user->tipo;
+							}
+							if($st->execute($values)===false){
+								$error=$st->errorInfo();
+								$resp->message.="No se pudo insertar el usuario $i. SQLSTATE[".$error[0]."]: ".$error[2]."\n";
+							}else{
+								$resp->id[]=$db->lastInsertId();
 							}
 						}
-						$values[]=isset($user->tel)?$user->tel:'';
-						if(!isset($user->nom)){
-							$resp->message.="La variable nom es obligatoria.\n";
-							$complete=false;
-						}else{
-							$values[]=$user->nom;
+						if($resp->message==''){
+							$resp->message=true;
 						}
-						if(!isset($user->ap)){
-							$resp->message.="La variable ap es obligatoria.\n";
-							$complete=false;
-						}else{
-							$values[]=$user->ap;
-						}
-						$values[]=isset($user->gen)?$user->gen:'';
-						$values[]=isset($user->pais)?$user->pais:'';
-						$values[]=isset($user->bio)?$user->bio:'';
-						$values[]=isset($user->lang)?$user->lang:'';
-						$values[]=isset($user->inst)?$user->inst:'';
-						$values[]=isset($user->int)?$user->int:'';
-						if(!isset($user->tipo)){
-							$resp->message.="La variable tipo es obligatoria.\n";
-							$complete=false;
-						}else{
-							$values[]=$user->tipo;
-						}
-						if($st->execute($values)===false){
-							$error=$st->errorInfo();
-							$resp->message.="No se pudo insertar el usuario $i. SQLSTATE[".$error[0]."]: ".$error[2]."\n";
-						}else{
-							$resp->id[]=$db->lastInsertId();
-						}
-					}
-					if($resp->message==''){
-						$resp->message=true;
+					}else{
+						$resp->message='No hay usuarios para insertar.';
 					}
 					break;
 				case 'get':
@@ -170,10 +174,18 @@ try {
 					$vals=[];
 					foreach ($input as $key => $value) {
 						$cols[]=$key;
+						if($key=='pass'){
+							if($value==''){
+								$vals[]=md5(randomPassword());
+							}else{
+								$vals[]=md5($value);
+							}
+							continue;
+						}
 						$vals[]=$value;
 					}
 					$vals[]=$id;
-					$cols=implode("_us=?, ", $cols);
+					$cols=implode("_us=?, ", $cols).'_us=?';
 					$query="UPDATE usuario SET $cols WHERE id_us=?";
 					$st=$db->prepare($query);
 					if($st->execute($vals)){
@@ -191,7 +203,7 @@ try {
 		case 'articulo':
 			switch ($action) {
 				case 'create':
-
+					
 					break;
 				
 				default:
