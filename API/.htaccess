@@ -7,8 +7,8 @@ RewriteBase /revista_cientifica/API/
 RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-f
 
-RewriteRule ^create/usuario/$ connections.php?action=create&type=usuario [L]
-RewriteRule ^create/usuario$ connections.php?action=create&type=usuario [L]
+RewriteRule ^create/([\s\S]+)/$ connections.php?action=create&type=$1 [L]
+RewriteRule ^create/([\s\S]+)$ connections.php?action=create&type=$1 [L]
 
 RewriteRule ^get/usuario/([0-9al,]+)(/([0-9,]+))?(/([0-9]+)/([0-9]+))?(/([\s\S]+))?$ connections.php?action=get&type=usuario&req=$1&usert=$3&c=$5&p=$6&fields=$8 [L]
 

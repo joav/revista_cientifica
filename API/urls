@@ -1,6 +1,6 @@
 create/usuario/
 
-get/usuario/cuales(/tipo_usuario)(/cantidad/pagina)(/columnas_devueltas)
+get/usuario/ids(/tipo_usuario)(/cantidad/pagina)(/columnas_devueltas)
 
 search/usuario/tipo_usuario(/cantidad/pagina)(/columnas_devueltas)/columnas_buscadas/valores_buscados
 

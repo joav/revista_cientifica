@@ -38,6 +38,7 @@ try {
 				case 'create':
 					$input=json_decode(file_get_contents('php://input'));
 					if(isset($input->users)){
+						$resp->newPass=[];
 						$users=$input->users;
 						$query="INSERT INTO usuario VALUES(null,?,?,MD5(?),?,?,?,?,?,?,?,?,?,?)";
 						$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
@@ -55,13 +56,13 @@ try {
 								$values[]=$user->email;
 							}
 							if($user->pass==''){
-								$values[]=randomPassword();
+								$newPass=$values[]=randomPassword();
 							}else{
 								if(!isset($user->pass)){
 									$resp->message.="La variable pass es obligatoria si no desea generar un password aleatorio.\n";
 									$complete=false;
 								}else{
-									$values[]=$user->pass;
+									$newPass=$values[]=$user->pass;
 								}
 							}
 							$values[]=isset($user->tel)?$user->tel:'';
@@ -89,11 +90,16 @@ try {
 							}else{
 								$values[]=$user->tipo;
 							}
-							if($st->execute($values)===false){
-								$error=$st->errorInfo();
-								$resp->message.="No se pudo insertar el usuario $i. SQLSTATE[".$error[0]."]: ".$error[2]."\n";
+							if($complete){
+								if($st->execute($values)===false){
+									$error=$st->errorInfo();
+									$resp->message.="No se pudo insertar el usuario $i. SQLSTATE[".$error[0]."]: ".$error[2]."\n";
+								}else{
+									$resp->id[]=$db->lastInsertId();
+									$resp->newPass[]=$newPass;
+								}
 							}else{
-								$resp->id[]=$db->lastInsertId();
+								$resp->message.="No se pudo insertar el usuario $i.";
 							}
 						}
 						if($resp->message==''){
@@ -203,7 +209,22 @@ try {
 		case 'articulo':
 			switch ($action) {
 				case 'create':
-					
+					extract($_POST);
+					$query="INSERT INTO articulo VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?)";
+					$dirDest='../uploads/';
+					$doc_aut='aut_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut']['name']));
+					$doc_aut_x='aut_x_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut_x']['name']));
+					$der='der_'.uniqid().'.'.end(explode('.',$_FILES['der']['name']));
+					$fallo=false;
+					if(!move_uploaded_file($_FILES['doc_aut']['tmp_name'], $dirDest.$doc_aut)){
+						$resp->message.="Fallo subiendo el articulo con autores\n";
+					}
+					if(!move_uploaded_file($_FILES['doc_aut_x']['tmp_name'], $dirDest.$doc_aut_x)){
+						$resp->message.="Fallo subiendo el articulo sin autores\n";
+					}
+					if(!move_uploaded_file($_FILES['der']['tmp_name'], $dirDest.$der)){
+						$resp->message.="Fallo subiendo la sesion de darechos\n";
+					}
 					break;
 				
 				default:
