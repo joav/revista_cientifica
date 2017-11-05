@@ -178,3 +178,52 @@
 [14-Oct-2017 01:55:08 UTC] PHP Fatal error:  Call to undefined function array_utf8_encode() in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 11
 [14-Oct-2017 01:56:00 UTC] PHP Fatal error:  Cannot access self:: when no class scope is active in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 11
 [14-Oct-2017 01:58:36 UTC] PHP Fatal error:  Cannot use object of type stdClass as array in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 68
+[14-Oct-2017 02:06:37 UTC] PHP Notice:  Undefined variable: tel in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 30
+[14-Oct-2017 02:06:37 UTC] PHP Notice:  Undefined variable: pais in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 30
+[14-Oct-2017 02:06:37 UTC] PHP Notice:  Undefined variable: bio in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 30
+[14-Oct-2017 02:06:37 UTC] PHP Notice:  Undefined variable: lang in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 30
+[14-Oct-2017 02:06:37 UTC] PHP Notice:  Undefined variable: inst in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 30
+[14-Oct-2017 02:06:37 UTC] PHP Notice:  Undefined variable: int in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 30
+[15-Oct-2017 04:38:23 UTC] PHP Notice:  Array to string conversion in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 94
+[16-Oct-2017 13:43:07 UTC] PHP Notice:  Trying to get property of non-object in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 40
+[03-Nov-2017 17:05:11 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 215
+[03-Nov-2017 17:05:11 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 216
+[03-Nov-2017 17:05:11 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 217
+[03-Nov-2017 17:08:16 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 215
+[03-Nov-2017 17:08:16 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 216
+[03-Nov-2017 17:08:16 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 217
+[03-Nov-2017 17:09:59 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 215
+[03-Nov-2017 17:09:59 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 216
+[03-Nov-2017 17:09:59 UTC] PHP Strict Standards:  Only variables should be passed by reference in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 217
+[05-Nov-2017 17:40:46 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:42:00 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:42:06 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:43:03 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:43:20 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:45:35 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:47:06 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:47:12 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:47:23 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:23 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:24 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:27 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:28 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:53 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:54 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:49:55 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:50:17 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:50:39 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:52:04 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:52:05 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:52:05 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:52:12 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:52:20 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:53:23 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:53:36 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:54:01 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:54:34 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:54:35 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:54:35 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:54:36 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:54:57 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263
+[05-Nov-2017 17:55:03 UTC] PHP Fatal error:  Cannot use [] for reading in /home/greidysierra/public_html/www.greidysierra.com/revista_cientifica/API/connections.php on line 263

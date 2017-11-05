@@ -28,7 +28,6 @@ $passDB='^1W34BW6i[%n';
 $sCon="mysql:host=$host;dbname=$dbname;";
 $resp=new stdClass();
 $resp->message='';
-$resp->id=[];
 $resp->results=[];
 try {
 	$db=new PDO($sCon,$user,$passDB,array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -39,6 +38,7 @@ try {
 					$input=json_decode(file_get_contents('php://input'));
 					if(isset($input->users)){
 						$resp->newPass=[];
+						$resp->id=[];
 						$users=$input->users;
 						$query="INSERT INTO usuario VALUES(null,?,?,MD5(?),?,?,?,?,?,?,?,?,?,?)";
 						$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
@@ -201,6 +201,34 @@ try {
 						$resp->message='Fallo la edición del usuario '.$id;
 					}
 					break;
+				case 'login':
+					$input=json_decode(file_get_contents('php://input'));
+					if (!$input->type) {
+						@session_start();
+						$resp->message="Usuario ".$_SESSION['user']['nom_us']." desconectado";
+						@session_destroy();
+					}else{
+						$query="SELECT * FROM usuario WHERE (email_us=? OR al_us=?) && pass_us=MD5(?)";
+						$st=$db->prepare($query);
+						if ($st->execute(array($input->user,$input->user,$input->pass))) {
+							if (!$st->columnCount()) {
+								$resp->message="Correo o contraseña incorrectos.";
+							}else{
+								$results=$st->fetch(PDO::FETCH_ASSOC);
+								if($results){
+									@session_start();
+									$resp->message=true;
+									$resp->results=formation_utf8_encode($results);
+									$_SESSION['user']=$resp->results;
+								}else{
+									$resp->message="Correo o contraseña incorrectos.";									
+								}
+							}
+						} else {
+							$resp->message="Ocurrio un error al buscar el usuario";
+						}
+					}
+					break;
 				default:
 					# code...
 					break;
@@ -209,21 +237,51 @@ try {
 		case 'articulo':
 			switch ($action) {
 				case 'create':
-					extract($_POST);
-					$query="INSERT INTO articulo VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?)";
-					$dirDest='../uploads/';
-					$doc_aut='aut_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut']['name']));
-					$doc_aut_x='aut_x_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut_x']['name']));
-					$der='der_'.uniqid().'.'.end(explode('.',$_FILES['der']['name']));
-					$fallo=false;
-					if(!move_uploaded_file($_FILES['doc_aut']['tmp_name'], $dirDest.$doc_aut)){
-						$resp->message.="Fallo subiendo el articulo con autores\n";
-					}
-					if(!move_uploaded_file($_FILES['doc_aut_x']['tmp_name'], $dirDest.$doc_aut_x)){
-						$resp->message.="Fallo subiendo el articulo sin autores\n";
-					}
-					if(!move_uploaded_file($_FILES['der']['tmp_name'], $dirDest.$der)){
-						$resp->message.="Fallo subiendo la sesion de darechos\n";
+					@session_start();
+					if(isset($_SESSION['user'])){
+						extract($_POST);
+						$query="INSERT INTO articulo VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?)";
+						$dirDest='../uploads/';
+						$doc_aut='aut_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut']['name']));
+						$doc_aut_x='aut_x_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut_x']['name']));
+						$der='der_'.uniqid().'.'.end(explode('.',$_FILES['der']['name']));
+						$fallo=false;
+						if(!move_uploaded_file($_FILES['doc_aut']['tmp_name'], $dirDest.$doc_aut)){
+							$resp->message.="Fallo subiendo el articulo con autores\n";
+							$fallo=true;						
+						}
+						if(!move_uploaded_file($_FILES['doc_aut_x']['tmp_name'], $dirDest.$doc_aut_x)){
+							$resp->message.="Fallo subiendo el articulo sin autores\n";
+							$fallo=true;						
+						}
+						if(!move_uploaded_file($_FILES['der']['tmp_name'], $dirDest.$der)){
+							$resp->message.="Fallo subiendo la sesion de darechos\n";
+							$fallo=true;						
+						}
+						if(!$fallo){
+							$db->exec("set names utf8");
+							$values=[];
+							$values[]=$_SESSION['user']['id_us'];
+							$values[]=uniqid(date('ymd').'_');
+							$values[]=$tit;
+							$values[]=$res;
+							$values[]=implode(',', $pal);
+							$values[]=$lang;
+							$values[]=implode(',', $org);
+							$values[]=$ref;
+							$values[]=date('Y-m-d H:i:s');
+							$values[]=$doc_aut;
+							$values[]=$doc_aut_x;
+							$values[]=$der;
+							print_r($values);
+							$st=$db->prepare($query);
+							if($st->execute($values)){
+								$resp->message=true;
+								$resp->id=[$db->lastInsertId()];
+							}
+						}else{
+							$resp->message="Fallo creando el artículo";
+						}
 					}
 					break;
 				
@@ -239,4 +297,5 @@ try {
 } catch (PDOException $e) {
 	$resp->message=$e->getMessage();
 }
+echo 'gonorrea';
 echo json_encode($resp); ?>

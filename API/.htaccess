@@ -7,12 +7,15 @@ RewriteBase /revista_cientifica/API/
 RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-f
 
-RewriteRule ^create/([\s\S]+)/$ connections.php?action=create&type=$1 [L]
-RewriteRule ^create/([\s\S]+)$ connections.php?action=create&type=$1 [L]
+RewriteRule ^create/([^/]+)/$ connections.php?action=create&type=$1 [L]
+RewriteRule ^create/([^/]+)$ connections.php?action=create&type=$1 [L]
 
 RewriteRule ^get/usuario/([0-9al,]+)(/([0-9,]+))?(/([0-9]+)/([0-9]+))?(/([\s\S]+))?$ connections.php?action=get&type=usuario&req=$1&usert=$3&c=$5&p=$6&fields=$8 [L]
 
+RewriteRule ^login/usuario/$ connections.php?action=login&type=usuario [L]
+RewriteRule ^login/usuario$ connections.php?action=login&type=usuario [L]
+
 RewriteRule ^search/usuario/([0-9,]+)(/([0-9]+)/([0-9]+))?(/([A-z_,]+))?/([A-z_,]+)/([\s\S]+)$ connections.php?action=search&type=usuario&usert=$1&c=$3&p=$4&fields=$6&sfields=$7&vfields=$8 [L]
 
-RewriteRule update/usuario/$ connections.php?action=update&type=usuario [L]
-RewriteRule update/usuario$ connections.php?action=update&type=usuario [L]
+RewriteRule ^update/usuario/$ connections.php?action=update&type=usuario [L]
+RewriteRule ^update/usuario$ connections.php?action=update&type=usuario [L]
