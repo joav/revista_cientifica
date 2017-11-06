@@ -44,6 +44,7 @@ try {
 						$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
 						$db->exec("set names utf8");
 						$st=$db->prepare($query);
+						$select=$db->prepare("SELECT id_us FROM usuario WHERE email_us=?");
 						for ($i=0; $i < count($users); $i++) { 
 							$user=$users[$i];
 							$values=[];
@@ -93,7 +94,15 @@ try {
 							if($complete){
 								if($st->execute($values)===false){
 									$error=$st->errorInfo();
-									$resp->message.="No se pudo insertar el usuario $i. SQLSTATE[".$error[0]."]: ".$error[2]."\n";
+									if (strpos($error[2], 'Duplicate entry')!==false) {
+										if($select->execute([$user->email])){
+											$id_us=$select->fetch(PDO::FETCH_ASSOC)['id_us'];
+											$resp->id[]=$id_us;
+										}else{
+											$error=$st->errorInfo();
+											$resp->message.="No se pudo insertar el usuario $i. SQLSTATE[".$error[0]."]: ".$error[2]."\n";
+										}
+									}
 								}else{
 									$resp->id[]=$db->lastInsertId();
 									$resp->newPass[]=$newPass;
@@ -242,27 +251,28 @@ try {
 						extract($_POST);
 						$query="INSERT INTO articulo VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?)";
 						$dirDest='../uploads/';
-						$doc_aut='aut_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut']['name']));
-						$doc_aut_x='aut_x_'.uniqid().'.'.end(explode('.',$_FILES['doc_aut_x']['name']));
-						$der='der_'.uniqid().'.'.end(explode('.',$_FILES['der']['name']));
+						$code=uniqid();
+						$doc_aut='aut_'.$code.'.'.end(explode('.',$_FILES['doc_aut']['name']));
+						$doc_aut_x=uniqid('aut_x_').'.'.end(explode('.',$_FILES['doc_aut_x']['name']));
+						$der=uniqid('der_').'.'.end(explode('.',$_FILES['der']['name']));
 						$fallo=false;
 						if(!move_uploaded_file($_FILES['doc_aut']['tmp_name'], $dirDest.$doc_aut)){
 							$resp->message.="Fallo subiendo el articulo con autores\n";
-							$fallo=true;						
+							$fallo=true;
 						}
 						if(!move_uploaded_file($_FILES['doc_aut_x']['tmp_name'], $dirDest.$doc_aut_x)){
 							$resp->message.="Fallo subiendo el articulo sin autores\n";
-							$fallo=true;						
+							$fallo=true;
 						}
 						if(!move_uploaded_file($_FILES['der']['tmp_name'], $dirDest.$der)){
 							$resp->message.="Fallo subiendo la sesion de darechos\n";
-							$fallo=true;						
+							$fallo=true;
 						}
 						if(!$fallo){
 							$db->exec("set names utf8");
 							$values=[];
 							$values[]=$_SESSION['user']['id_us'];
-							$values[]=uniqid(date('ymd').'_');
+							$values[]=date('ymd').'_'.$code;
 							$values[]=$tit;
 							$values[]=$res;
 							$values[]=implode(',', $pal);
@@ -273,18 +283,48 @@ try {
 							$values[]=$doc_aut;
 							$values[]=$doc_aut_x;
 							$values[]=$der;
-							print_r($values);
 							$st=$db->prepare($query);
 							if($st->execute($values)){
 								$resp->message=true;
-								$resp->id=[$db->lastInsertId()];
+								$resp->id=$db->lastInsertId();
+								$resp->aut=$_SESSION['user']['id_us'];
+								$resp->code=$values[1];
 							}
 						}else{
 							$resp->message="Fallo creando el artículo";
 						}
 					}
 					break;
-				
+				case 'associate':
+					$query="INSERT INTO autxart VALUES(?,?)";
+					$st=$db->prepare($query);
+					$input=json_decode(file_get_contents('php://input'));
+					$users=$input->users;
+					$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
+					$currError=false;
+					for ($i=0; $i < count($users); $i++) {
+						if(!$st->execute([$input->art,$users[$i]])){
+							$currError=true;
+							$error=$st->errorInfo();
+							$resp->message.="No se pudo asociar el usuario ".$users[$i]." de la posición $i con el artículo ".$input->art.". SQLSTATE[".$error[0]."]: ".$error[2]."\n";
+						}
+					}
+					if(!$currError){
+						$resp->message=true;
+					}
+					break;
+				case 'assign':
+					@session_start();
+					$user=$_SESSION['user'];
+					if($user->tipo_us==0){
+						//////////////////////
+					}else{
+						$resp->message='El usuario no tiene los suficientes permisos';
+					}
+					break;
+				case 'get':
+
+					break;
 				default:
 					# code...
 					break;
@@ -297,5 +337,4 @@ try {
 } catch (PDOException $e) {
 	$resp->message=$e->getMessage();
 }
-echo 'gonorrea';
 echo json_encode($resp); ?>

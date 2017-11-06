@@ -53,3 +53,14 @@
 	"int":"",//Intereses solo es necesario si se va insertar un revisor
 	"tipo":0//Tipo de usuario 0->editor 1->revisor 2->autor
 }
+/*Login/out usuario*/
+{
+	"type":0,//0->logout; 1->login
+	"user":"a@a.com",//Email o alias(Recomendado email pues es irrepetible)
+	"pass":"1234"//Contraseña sin encriptar
+}
+/*Asociar artículo a autores*/
+{
+	"art":1,//Id del artículo
+	"users":[2,58,63]//ids de los usuarios a asociar
+}
