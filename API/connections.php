@@ -355,37 +355,42 @@ try {
 						if ($assign==1) {
 							if($_SESSION['user']['tipo_us']==0){
 								$id=$_SESSION['user']['id_us'];
-								$query="SELECT $fields FROM list_art WHERE editor=$id $c";
-								$count="(SELECT count(*) FROM list_art WHERE editor=$id)";
+								$query="SELECT $fields FROM list_art WHERE editor=? $c";
+								$count="(SELECT count(*) FROM list_art WHERE editor=?)";
+								$values=[$id,$id];
 							}elseif($_SESSION['user']['tipo_us']==1){
 								$id=$_SESSION['user']['id_us'];
-								$query="SELECT $fields FROM list_art WHERE revisor=$id $c";
-								$count="(SELECT count(*) FROM list_art WHERE revisor=$id)";
+								$query="SELECT $fields FROM list_art WHERE revisor=? $c";
+								$count="(SELECT count(*) FROM list_art WHERE revisor=?)";
+								$values=[$id,$id];
 							}else{
 								$resp->message='No tienes los permisos suficientes';
 							}
 						}else{
 							if($_SESSION['user']['tipo_us']==0){
-								$id=$_SESSION['user']['id_us'];
 								$query="SELECT $fields FROM list_art $c";
 								$count="(SELECT count(*) FROM list_art)";
+								$values=[];
 							}elseif($_SESSION['user']['tipo_us']==2){
 								$id=$_SESSION['user']['id_us'];
-								$query="SELECT $fields FROM list_art WHERE autor=$id $c";
-								$count="(SELECT count(*) FROM list_art WHERE autor=$id)";
+								$query="SELECT $fields FROM list_art WHERE autor=? $c";
+								$count="(SELECT count(*) FROM list_art WHERE autor=?)";
+								$values=[$id,$id];
 							}else{
 								$resp->message='No tienes los permisos suficientes';
 							}
 						}
 					}else{
-						$query="SELECT $fields FROM list_art WHERE articulo=$ids $c";
-						$count="(SELECT count(*) FROM list_art WHERE articulo=$ids)";
+						$query="SELECT $fields FROM list_art WHERE articulo IN (?) $c";
+						$count="(SELECT count(*) FROM list_art WHERE articulo IN (?))";
+						$values=[$ids,$ids];
 					}
 					$query=str_replace(" FROM", ", $count as total FROM", $query);
 					$st=$db->prepare($query);
-					if($st->execute($req)!==false){
+					if($st->execute($values)!==false){
 						$results=$st->fetchAll(PDO::FETCH_ASSOC);
 						$resp->results=formation_utf8_encode($results);
+						$resp->message=true;
 					}else{
 						$resp->message='Fallo en la consulta';
 					}
@@ -412,6 +417,7 @@ try {
 						if($st->execute($values)!==false){
 							$results=$st->fetchAll(PDO::FETCH_ASSOC);
 							$resp->results=formation_utf8_encode($results);
+							$resp->message=true;
 						}else{
 							$resp->message='Fallo en la consulta';
 						}
@@ -423,6 +429,16 @@ try {
 				default:
 					# code...
 					break;
+			}
+			break;
+		case 'autores':
+			$fields=$fields!=''?$fields:'*';
+			$query="SELECT $fields FROM autores WHERE articulo=?";
+			$st=$db->prepare($query);
+			if ($st->execute([$id])) {
+				$resp->message=true;
+				$results=$st->fetchAll(PDO::FETCH_ASSOC);
+				$resp->results=formation_utf8_encode($results);
 			}
 			break;
 		default:
