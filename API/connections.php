@@ -1,4 +1,11 @@
 <?php header('Content-Type: application/json');
+function getRealIP() {
+	if (!empty($_SERVER['HTTP_CLIENT_IP']))
+		return $_SERVER['HTTP_CLIENT_IP'];
+	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+		return $_SERVER['HTTP_X_FORWARDED_FOR'];
+	return $_SERVER['REMOTE_ADDR'];
+}
 function formation_utf8_encode($dat)
 {
     if (is_string($dat))
@@ -20,6 +27,8 @@ function randomPassword() {
     }
     return implode($pass);
 }
+session_id(md5(getRealIP()));
+session_start();
 extract($_GET);
 $host="localhost";
 $dbname="revista_cientifica";
@@ -32,6 +41,9 @@ $resp->results=[];
 try {
 	$db=new PDO($sCon,$user,$passDB,array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 	switch ($type) {
+		case 'check':
+			print_r($_SESSION);
+		break;
 		case 'usuario':
 			switch ($action) {
 				case 'create':
@@ -213,7 +225,6 @@ try {
 				case 'login':
 					$input=json_decode(file_get_contents('php://input'));
 					if (!$input->type) {
-						@session_start();
 						$resp->message="Usuario ".$_SESSION['user']['nom_us']." desconectado";
 						@session_destroy();
 					}else{
@@ -225,7 +236,6 @@ try {
 							}else{
 								$results=$st->fetch(PDO::FETCH_ASSOC);
 								if($results){
-									@session_start();
 									$resp->message=true;
 									$resp->results=formation_utf8_encode($results);
 									$_SESSION['user']=$resp->results;
@@ -246,7 +256,6 @@ try {
 		case 'articulo':
 			switch ($action) {
 				case 'create':
-					@session_start();
 					if(isset($_SESSION['user'])){
 						extract($_POST);
 						$query="INSERT INTO articulo VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -275,9 +284,9 @@ try {
 							$values[]=date('ymd').'_'.$code;
 							$values[]=$tit;
 							$values[]=$res;
-							$values[]=implode(',', $pal);
+							$values[]=$pal;
 							$values[]=$lang;
-							$values[]=implode(',', $org);
+							$values[]=$org;
 							$values[]=$ref;
 							$values[]=date('Y-m-d H:i:s');
 							$values[]=$doc_aut;
@@ -293,6 +302,9 @@ try {
 						}else{
 							$resp->message="Fallo creando el artículo";
 						}
+					}
+					else{
+						$resp->message='No esta logueado';
 					}
 					break;
 				case 'associate':
@@ -314,16 +326,99 @@ try {
 					}
 					break;
 				case 'assign':
-					@session_start();
 					$user=$_SESSION['user'];
-					if($user->tipo_us==0){
-						//////////////////////
+					if($user['tipo_us']==0){
+						$query="INSERT INTO asigna VALUES(null,?,?,?,?,?,0)";
+						$st=$db->prepare($query);
+						$input=json_decode(file_get_contents('php://input'));
+						$date=date('Y-m-d H:i:s');
+						$values=[];
+						$values[]=$_SESSION['user']['id_us'];
+						$values[]=$input->rev;
+						$values[]=$input->art;
+						$values[]=$date;
+						$values[]=$date;
+						if($st->execute($values)){
+							$resp->message=true;
+						}
 					}else{
 						$resp->message='El usuario no tiene los suficientes permisos';
 					}
 					break;
 				case 'get':
-
+					if($ids=='all'){
+						$fields=$fields!=''?$fields:'*';
+						if($c!=''){
+							$offset=$c*($p-1);
+							$c="LIMIT $offset,$c";
+						}
+						if ($assign==1) {
+							if($_SESSION['user']['tipo_us']==0){
+								$id=$_SESSION['user']['id_us'];
+								$query="SELECT $fields FROM list_art WHERE editor=$id $c";
+								$count="(SELECT count(*) FROM list_art WHERE editor=$id)";
+							}elseif($_SESSION['user']['tipo_us']==1){
+								$id=$_SESSION['user']['id_us'];
+								$query="SELECT $fields FROM list_art WHERE revisor=$id $c";
+								$count="(SELECT count(*) FROM list_art WHERE revisor=$id)";
+							}else{
+								$resp->message='No tienes los permisos suficientes';
+							}
+						}else{
+							if($_SESSION['user']['tipo_us']==0){
+								$id=$_SESSION['user']['id_us'];
+								$query="SELECT $fields FROM list_art $c";
+								$count="(SELECT count(*) FROM list_art)";
+							}elseif($_SESSION['user']['tipo_us']==2){
+								$id=$_SESSION['user']['id_us'];
+								$query="SELECT $fields FROM list_art WHERE autor=$id $c";
+								$count="(SELECT count(*) FROM list_art WHERE autor=$id)";
+							}else{
+								$resp->message='No tienes los permisos suficientes';
+							}
+						}
+					}else{
+						$query="SELECT $fields FROM list_art WHERE articulo=$ids $c";
+						$count="(SELECT count(*) FROM list_art WHERE articulo=$ids)";
+					}
+					$query=str_replace(" FROM", ", $count as total FROM", $query);
+					$st=$db->prepare($query);
+					if($st->execute($req)!==false){
+						$results=$st->fetchAll(PDO::FETCH_ASSOC);
+						$resp->results=formation_utf8_encode($results);
+					}else{
+						$resp->message='Fallo en la consulta';
+					}
+					break;
+				case 'search':
+					$fields=$fields!=''?$fields:'*';
+					if($c!=''){
+						$offset=$c*($p-1);
+						$c="LIMIT $offset,$c";
+					}
+					$sfields=explode(',', $sfields);
+					$vfields=explode(',', $vfields);
+					if(count($sfields)==count($vfields)){
+						$where=[];
+						$values=[];
+						for ($i=0; $i < count($sfields); $i++) {
+							$where[]=$sfields[$i].' LIKE CONCAT(\'%\',?,\'%\')';
+						}
+						$where=implode(' AND ', $where);
+						$count="(SELECT COUNT(*) FROM list_art WHERE $where)";
+						$query="SELECT $fields, $count as total FROM usuario WHERE $where $c";
+						$values=array_merge($vfields,$vfields);
+						$st=$db->prepare($query);
+						if($st->execute($values)!==false){
+							$results=$st->fetchAll(PDO::FETCH_ASSOC);
+							$resp->results=formation_utf8_encode($results);
+						}else{
+							$resp->message='Fallo en la consulta';
+						}
+					}
+					else{
+						$resp->message='La cantidad de campos debe ser igual a la cantidad de valores a buscar.';
+					}
 					break;
 				default:
 					# code...

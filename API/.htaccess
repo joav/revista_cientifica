@@ -25,3 +25,8 @@ RewriteRule ^associate/articulo/$ connections.php?action=associate&type=articulo
 
 RewriteRule ^assign/articulo$ connections.php?action=assign&type=articulo [L]
 RewriteRule ^assign/articulo/$ connections.php?action=assign&type=articulo [L]
+
+RewriteRule ^check$ connections.php?type=check [L]
+
+RewriteRule ^get/articulo/([0-9al,]+)(/([0-9]+)/([0-9]+))?(/([01]))?(/([A-z_,]+))?$ connections.php?action=get&type=articulo&ids=$1&c=$3&p=$4&assign=$6&fields=$8 [L]
+RewriteRule ^search/articulo(/([0-9]+)/([0-9]+))?(/([A-z_,]+))?/([A-z_,]+)/([\s\S]+) connections.php?action=get&type=articulo&c=$2&p=$3&fields=$5&sfields=$6&vfields=$7 [L]
