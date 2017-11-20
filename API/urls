@@ -8,6 +8,6 @@ update/usuario/
 
 create/articulo/
 
-get/articulo/ids(/cantidad/pagina)(/asignados)
+get/articulo/ids(/cantidad/pagina)(/asignados)(/columnas_devueltas)
 
 search/articulo(/cantidad/pagina)(/columnas_devueltas)/columnas_buscadas/valores_buscados
