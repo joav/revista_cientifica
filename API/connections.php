@@ -352,8 +352,8 @@ try {
 					}
 					break;
 				case 'get':
+					$fields=$fields!=''?$fields:'*';
 					if($ids=='all'){
-						$fields=$fields!=''?$fields:'*';
 						if($c!=''){
 							$offset=$c*($p-1);
 							$c="LIMIT $offset,$c";
@@ -387,8 +387,8 @@ try {
 							}
 						}
 					}else{
-						$query="SELECT $fields FROM list_art WHERE articulo IN (?) $c";
-						$count="(SELECT count(*) FROM list_art WHERE articulo IN (?))";
+						$query="SELECT $fields FROM articulo WHERE id_art IN (?) $c";
+						$count="(SELECT count(*) FROM articulo WHERE id_art IN (?))";
 						$values=[$ids,$ids];
 					}
 					$query=str_replace(" FROM", ", $count as total FROM", $query);
@@ -481,7 +481,7 @@ try {
 						$fecha=new DateTime($asignacion['dateac_as']);
 						$fecha->modify('+15 day');
 						if(strtotime($now)<strtotime($fecha->format('Y-m-d H:i:s'))){
-							
+
 						}else{
 							$resp->message='Ha excedido el tiempo para la revisión del artículo';
 						}
