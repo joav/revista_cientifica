@@ -32,3 +32,5 @@ RewriteRule ^get/articulo/([0-9al,]+)(/([0-9]+)/([0-9]+))?(/([01]))?(/([A-z_,]+)
 RewriteRule ^search/articulo(/([0-9]+)/([0-9]+))?(/([A-z_,]+))?/([A-z_,]+)/([\s\S]+) connections.php?action=get&type=articulo&c=$2&p=$3&fields=$5&sfields=$6&vfields=$7 [L]
 
 RewriteRule ^get/autores/([0-9]+)$ connections.php?action=get&type=autores&id=$1 [L]
+
+RewriteRule ^accept/articulo/$ connections.php?action=accept&type=articulo [L]

@@ -328,19 +328,25 @@ try {
 				case 'assign':
 					$user=$_SESSION['user'];
 					if($user['tipo_us']==0){
-						$query="INSERT INTO asigna VALUES(null,?,?,?,?,?,0)";
+						$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
+						$query="INSERT INTO asigna VALUES(null,?,?,?,?,NULL,0)";
 						$st=$db->prepare($query);
 						$input=json_decode(file_get_contents('php://input'));
 						$date=date('Y-m-d H:i:s');
-						$values=[];
-						$values[]=$_SESSION['user']['id_us'];
-						$values[]=$input->rev;
-						$values[]=$input->art;
-						$values[]=$date;
-						$values[]=$date;
-						if($st->execute($values)){
-							$resp->message=true;
+						$complete=true;
+						for ($i=0; $i < count($input->rev); $i++) { 
+							$values=[];
+							$values[]=$_SESSION['user']['id_us'];
+							$values[]=$input->rev[$i];
+							$values[]=$input->art;
+							$values[]=$date;
+							if(!$st->execute($values)){
+								$complete=false;
+								$resp->message.="Fallo en la asignación al revisor con id=".$input->rev[$i];
+							}
 						}
+						if($complete)
+							$resp->message=$complete;
 					}else{
 						$resp->message='El usuario no tiene los suficientes permisos';
 					}
@@ -360,7 +366,7 @@ try {
 								$values=[$id,$id];
 							}elseif($_SESSION['user']['tipo_us']==1){
 								$id=$_SESSION['user']['id_us'];
-								$query="SELECT $fields FROM list_art WHERE revisor=? $c";
+								$query="SELECT $fields FROM list_art WHERE revisor=? AND estado!=2 $c";
 								$count="(SELECT count(*) FROM list_art WHERE revisor=?)";
 								$values=[$id,$id];
 							}else{
@@ -426,6 +432,23 @@ try {
 						$resp->message='La cantidad de campos debe ser igual a la cantidad de valores a buscar.';
 					}
 					break;
+				case 'accept':
+					$user=$_SESSION['user'];
+					if($user['tipo_us']==1){
+						$date=date('Y-m-d H:i:s');
+						$query="UPDATE asigna set dateac_as=?, state_as=? where rev_as=? and art_as=?";
+						$st=$db->prepare($query);
+						$input=json_decode(file_get_contents('php://input'));
+						$values=[$date,$input->accept,$user['id_us'],$input->art];
+						if($st->execute($values)){
+							$resp->message=true;
+						}else{
+							$resp->message='Ha ocurrido un error inesperado aceptando o rechazando el artículo.';
+						}
+					}else{
+						$resp->message='No tiene los permisos necesarios';
+					}
+					break;
 				default:
 					# code...
 					break;
@@ -439,6 +462,35 @@ try {
 				$resp->message=true;
 				$results=$st->fetchAll(PDO::FETCH_ASSOC);
 				$resp->results=formation_utf8_encode($results);
+			}
+			break;
+		case 'revision':
+			$user=$_SESSION['user'];
+			if($user['tipo_us']==1){
+				$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT);
+				$input=json_decode(file_get_contents('php://input'));
+				$query="SELECT dateac_as FROM asigna WHERE rev_as=? AND art_as=? AND dateac_as!=NULL";
+				$st=$db->prepare($query);
+				$values=[$_SESSION['user']['id_us'],$input->art];
+				if(!$st->execute($values)){
+					$resp->message='Ha ocurrido un error';
+				}else{
+					if($st->rowCount()>0){
+						$asignacion=$st->fetch(PDO::FETCH_ASSOC);
+						$now=date('Y-m-d H:i:s');
+						$fecha=new DateTime($asignacion['dateac_as']);
+						$fecha->modify('+15 day');
+						if(strtotime($now)<strtotime($fecha->format('Y-m-d H:i:s'))){
+							
+						}else{
+							$resp->message='Ha excedido el tiempo para la revisión del artículo';
+						}
+					}else{
+						$resp->message='Este artículo no se le ha asignado';
+					}
+				}
+			}else{
+				$resp->message='No tiene los permisos necesarios';
 			}
 			break;
 		default:
